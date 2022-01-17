@@ -6,7 +6,7 @@ A schematic describing the server is illustrated below.
 
 ## User Registry
 
-First of all, to use this server the researcher must register it self in the server. To do so, one must ask for the server administrator to run the [user register](user-register.sh) file. this file works as follows:
+First of all, to use this server the researcher must register it self in the server. To do so, one must ask for the server administrator to run the [user registry](user-record.sh) file. this file works as follows:
 
   1. Informations of the new user must be provided, such as:
      - A user name, made as follows: firstname-lastname
