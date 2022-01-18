@@ -2,14 +2,16 @@
 
 echo "Digite o nome do usuário do usuário"
 read user
-if ! [ -e /home/$user ]
-then
+while ! [ -e /home/$user ]
+do
 	echo "Usuário não existe, digite novamente ou digite 'out' para sair e solicite a criação de um novo usuário "
 	read user
-elif [ $user = out ]
-then
-	break
-fi
+
+	if [ $user = out ]
+	then
+		exit
+	fi
+done
 
 echo "Digite o nome do projeto"
 read projeto
@@ -18,16 +20,17 @@ read path
 echo "Digite python ou p para projetos em python, matlab ou m para projetos em matlab"
 read tipo
 
-if [ $tipo != python ] && [ $tipo != p ] && [ $tipo != matlab ] && [ $tipo != m ]
-then
-	echo "Tipo inválido, digite novamente (python ou p para projrtos em python, matlab ou m para projetos em matlab)"
+while [ $tipo != python ] && [ $tipo != p ] && [ $tipo != matlab ] && [ $tipo != m ]
+	# TODO: Procurar fzf(https://github.com/junegunn/fzf#installation)
+do
+	echo "Tipo inválido, digite novamente (python ou p para projetos em python, matlab ou m para projetos em matlab)"
 	read tipo
-fi
+done
 
 docker_build_run () {
 	
 	docker build -t $projeto:latest /home/$user/$projeto/
-	docker run -it \
+	docker run --rm -it \
 		-v /home/$user/$projeto/project/output:/output \
 		$projeto:latest
 	}
@@ -45,5 +48,5 @@ case $tipo in
 		;;
 
 	esac
-
+# TODO: Fazer script para scp 
 docker_build_run
