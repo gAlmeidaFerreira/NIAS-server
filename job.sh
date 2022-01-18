@@ -50,3 +50,6 @@ case $tipo in
 	esac
 # TODO: Fazer script para scp 
 docker_build_run
+
+echo "Enviando output do código para PC do pesquisador"
+scp -r /home/$user/$projeto/project/output $user:$path/output
