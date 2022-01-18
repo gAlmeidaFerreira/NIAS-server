@@ -13,7 +13,7 @@ do
 	fi
 done
 
-echo "Digite o nome do projeto"
+echo "Digite o nome do projeto (Deve ser escrito em letras minusculas e sem espaço)"
 read projeto
 echo "Digite o caminho completo para a pasta de origem do projeto"
 read path
