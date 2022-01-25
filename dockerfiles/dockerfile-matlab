@@ -1,0 +1,17 @@
+FROM mathworks/matlab:r2021a
+USER root
+
+ENV MLM_LINCENSE_FILE=PATH_TO_LICENSE
+
+RUN mkdir /code\
+    && mkdir /input\
+    && mkdir /output
+ 
+COPY ./code /code
+ 
+COPY ./input /input
+
+WORKDIR /code
+
+ENTRYPOINT [ "matlab" , "-batch"  , "app.m" ]
+
