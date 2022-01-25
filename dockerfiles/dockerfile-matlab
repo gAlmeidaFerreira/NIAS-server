@@ -7,9 +7,9 @@ RUN mkdir /code\
     && mkdir /input\
     && mkdir /output
  
-COPY ./code /code
+COPY ./project/code /code
  
-COPY ./input /input
+COPY ./project/input /input
 
 WORKDIR /code
 
