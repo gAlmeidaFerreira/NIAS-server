@@ -14,6 +14,7 @@ In this section we will follow the steps of general server operation, this serve
    - The directory ``input`` will contain the data by the program as input, such as images or datasets
 
 2. In order to run his project, the researcher must use ssh to get inside the server in his respective user. For doing that, the following command must executed:
+   - To configure ssh in the PC, the resercher can use these links, to configure in [windows](https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse) and to configure in [linux](https://ubuntu.com/server/docs/service-openssh) 
    ```
    ssh -p PORT user@SERVERIP
    ```
