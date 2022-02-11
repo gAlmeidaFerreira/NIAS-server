@@ -56,7 +56,7 @@ Once the researcher is registered, the server will be available for him to run h
 1. Some informations of the new job must be provided
    - Name of the user who is creating the job
    - Name of the project which will run in the server
-   - The path of the project on the researcher's personal computer
+   - The path of the project on the researcher's personal computer (the last directory name in this argument must be "project")
    - In what program language the project is writen, Python or MATLAB
 
 2. A new directory is created under the user home directory whose name is the name of the project
