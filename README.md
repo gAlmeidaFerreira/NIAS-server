@@ -11,7 +11,17 @@ In this section we will follow the steps of general server operation, this serve
 1. The researcher must build a directory called ***project***, inside his personal computer, containing all the files necessary for his project to run:
    - this directory must have two other directories inside of it, they must be called ``code`` and ``input``
    - Under ``code`` will be the ``app`` file, which will be the executable program, and ``requirements.txt``, intended to indicate the libraries used in the code.
-     - **Only the files named app.py or app.m and requirements.txt will be read by the server**  
+     - **Only the files named app.py or app.m and requirements.txt will be read by the server**
+   - in order to build the ``requirements.txt`` you will have to find out which versions of python libraries your machine is using. To do this, use the following lines of code inside the terminal (put exactly the same output in the ``requirements.txt`` file):
+      - For linux operating systems or online jupyter notebooks like google colab or Kaggle (use "!" at the beginning of the line of code if you are using online jupyter notebooks)  
+         ```
+         pip freeze list | grep <libraryname>
+         ```
+      - For windows operatiing systems using powershell
+         ```
+         pip freeze list | Select-String <libraryname>
+         ```
+      
    - The directory ``input`` will contain the data by the program as input, such as images or datasets
 
 2. In order to run his project, the researcher must use ssh to get inside the server in his respective user. For doing that, the following command must executed:
