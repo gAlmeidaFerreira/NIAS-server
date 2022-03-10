@@ -1,0 +1,56 @@
+#! /bin/bash
+
+#Getting the username, project name and path in user's PC
+echo "Digite o nome do usuário do usuário"
+read user
+while ! [ -e /home/$user ]
+do
+	echo "Usuário não existe, digite novamente ou digite 'out' para sair e solicite a criação de um novo usuário "
+	read user
+
+	if [ $user = out ]
+	then
+		exit
+	fi
+done
+
+echo "Digite o nome do projeto (Deve ser escrito em letras minusculas e sem espaço)"
+read projeto
+while ! [ -O $projeto ]
+do
+	echo "Este projeto não existe, por favor digitar nome corretamente ou criar um novo com 'create-job'"
+	read projeto
+done
+
+#Checking if the project container is still running
+if [ "$(docker ps -q -f name=$projeto-container)" ]; then
+	echo "Este projeto ainda está rodando, digite 'stop' para para-lo ou 'sair' para sair "
+	read opcao
+
+elif ! [ -d /home/$(whoami)/$projeto/output ]; then
+	echo "Projeto não foi executado corretamente"
+fi
+
+#Taking the appropriate action in case of the project container is still running
+case $opcao in
+	stop)
+		$(docker stop "$projeto-container")
+		;;
+	sair)
+		exit
+		;;
+esac
+
+echo "Digite o caminho completo para a pasta de origem do projeto em seu computador pessoal"
+read path
+
+#Making the function to build a image for the project and run a container with it
+docker_build_run () {
+	
+	docker build -t $projeto:latest /home/$user/$projeto/
+	docker run --rm --name "$projeto-container" -it \
+		-v /home/$user/$projeto/project/output:/output \
+		$projeto:latest
+	}
+ 
+docker_build_run

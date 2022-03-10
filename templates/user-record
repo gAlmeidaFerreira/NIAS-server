@@ -1,0 +1,20 @@
+#! /bin/bash
+
+# Recebendo informações para criação do usuário
+echo "Digite o nome de usuário (primeironome-ultimonome)"
+read user
+echo "Digite o nome de usuário no computador pessoal do pesquisador "
+read userclient
+
+#Criando usuário
+echo "Adicione uma senha para seu usuário no servidor"
+useradd -m -k /etc/skel-client -G docker $user
+passwd $user
+
+# Registrando computador do usuário como ssh host
+echo "Host $user 
+     HostName localhost
+     User \"$userclient\"
+     Port 43022" > /home/$user/.ssh/config
+
+

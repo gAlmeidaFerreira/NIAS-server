@@ -1,0 +1,44 @@
+#! /bin/bash
+
+#Getting project name in user's PC
+echo "Digite o nome do projeto o qual se deseja obter o output"
+read projeto
+while ! [ -O $projeto ]
+do
+	echo "Este projeto não existe, por favor digitar nome corretamente ou criar um novo com 'create-job'"
+	read projeto
+done 
+
+#Checking if the project container is still running
+if [ "$(docker ps -q -f name=$projeto-container)" ]; then
+	echo "Este projeto ainda está rodando, digite 'stop' para para-lo ou 'sair' para sair "
+	read opcao
+
+elif [ -d /home/$(whoami)/$projeto/output ]; then
+	echo "Projeto foi executado com sucesso, digite 'obter' para que o output seja copiado para seu computador pessoal"
+	read opcao
+
+else
+	echo "Projeto não foi executado corretamente, utilize 'update-job' para atualiza-lo"
+fi
+
+#Taking the appropriate action in each case
+case $opcao in
+	stop)
+		$(docker stop "$projeto-container")
+		;;
+	sair)
+		exit
+		;;
+	obter)
+		#Getting project path in user's PC
+		echo "Digite o caminho do arquivo de origem do projeto no PC do pesquisador, incluindo o diretório 'Projeto'" 
+		read path
+		echo "Digite a senha de usuário do seu computador pessoal"
+		scp -r /home/$(whoami)/$projeto/output $(whoami):$path/output
+		;;
+	esac
+
+
+		
+

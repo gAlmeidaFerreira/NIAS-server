@@ -1,5 +1,7 @@
 #! /bin/bash
 
+###Obtaining informations to create a new job###
+#Getting the username
 echo "Digite o nome do usuário do usuário"
 read user
 while ! [ -e /home/$user ]
@@ -13,31 +15,45 @@ do
 	fi
 done
 
+#Defining the name of the new project
 echo "Digite o nome do projeto (Deve ser escrito em letras minusculas e sem espaço)"
 read projeto
+while [ -O $projeto ]
+do
+	echo "Este projeto já existe, por favor digitar novo nome"
+	read projeto
+done
+
+#Asking for the path of the project in the user's PC
 echo "Digite o caminho completo para a pasta de origem do projeto"
 read path
+
+#Defining the type of the project (Python or MATLAB)
 echo "Digite python ou p para projetos em python, matlab ou m para projetos em matlab"
 read tipo
 
 while [ $tipo != python ] && [ $tipo != p ] && [ $tipo != matlab ] && [ $tipo != m ]
-	# TODO: Procurar fzf(https://github.com/junegunn/fzf#installation)
+	
 do
 	echo "Tipo inválido, digite novamente (python ou p para projetos em python, matlab ou m para projetos em matlab)"
 	read tipo
 done
 
+#Function to build the image and run a container for the project 
 docker_build_run () {
 	
 	docker build -t $projeto:latest /home/$user/$projeto/
-	docker run --rm -it \
+	docker run --rm --name "$projeto-container" -it \
 		-v /home/$user/$projeto/project/output:/output \
 		$projeto:latest
 	}
 
+#Creating a directory to store the files of the new project and filling it with a copy of the given path
 mkdir /home/$user/$projeto
+echo "Digite a senha de usuário do seu computador pessoal"
 scp -r $user:$path /home/$user/$projeto
 
+#Copying partinent Dockerfile from tamplates directory depending on the project type
 case $tipo in
 	python | p)
 		cp /home/templates/dockerfile-python /home/$user/$projeto/Dockerfile
@@ -48,8 +64,8 @@ case $tipo in
 		;;
 
 	esac
-# TODO: Fazer script para scp 
+
+#Running the docker function 
 docker_build_run
 
-echo "Enviando output do código para PC do pesquisador"
-scp -r /home/$user/$projeto/project/output $user:$path/output
+
