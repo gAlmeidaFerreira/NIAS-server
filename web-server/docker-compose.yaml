@@ -1,0 +1,27 @@
+version: '3.9'
+
+networks:
+  lb-network:
+     driver: bridge
+
+services:
+  app1:
+    image: python-app1:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - lb-network
+  
+  app2:
+    image: python-app2:latest
+    ports:
+      - "8001:8000"
+    networks:
+      - lb-network
+   
+  nginx-lb:
+    image: nginx-lb:latest
+    ports:
+     - "80:80"
+    networks:
+     - lb-network
