@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, FileField
 from wtforms.fields.simple import BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
@@ -15,3 +15,7 @@ class LogInform(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     remember = BooleanField ("Remember me")
     submit = SubmitField("LogIn")
+
+class UploadFileForm(FlaskForm):
+    file = FileField("File")
+    submit = SubmitField("Upload File")

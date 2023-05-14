@@ -1,10 +1,13 @@
 from flask import Flask, render_template, url_for
 from flask.helpers import flash, redirect
-from forms import Resgistrationform, LogInform
+from forms import Resgistrationform, LogInform, UploadFileForm
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '8ec624b940a6696b13c8f50c8bab331b'
+app.config['UPLOAD_FOLDER'] = 'static/files'
 
 #Pagina home
 @app.route("/")
@@ -16,10 +19,16 @@ def homepage():
 def contatos():
     return render_template("contatos.html", title="contatos")
 
-#pagina de usuarios
-@app.route("/usuarios/<nome_do_usuario>")
-def usuarios(nome_do_usuario):
-    return render_template("usuarios.html", nome_do_usuario=nome_do_usuario)
+#pagina de upload de arquivos
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    form = UploadFileForm()
+    if form.validate_on_submit():
+        file = form.file.data
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
+        flash(f'Arquivo {form.file.name} sumetido com sucesso!','success')
+        return redirect(url_for('homepage'))
+    return render_template("upload.html", title="Upload Files", form = form)
 
 #Paginas de registro e login
 @app.route("/register", methods=['GET','POST'])
