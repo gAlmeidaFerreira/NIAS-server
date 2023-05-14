@@ -1,4 +1,6 @@
 import pika
+import time
+import random
 
 # Criando e configurando a conexão
 connection_params = pika.ConnectionParameters("localhost")
@@ -12,15 +14,20 @@ channel = connection.channel()
 # Criando a fila
 channel.queue_declare(queue="letterbox")
 
-#Criando a mensagem
-message = "Hello world! Minha primeira mensagem"
+#Loop infinito para simular envio de mensagens por diferentes usuários
+mensageId = 1
+while(True):
 
-#Declarando a exange e enviando a mensagem
-channel.basic_publish(exchange='', routing_key="letterbox", body=message)
+    #Criando a mensagem
+    message = f"Enviando Mensagem: {mensageId}"
 
-print(f"enviando a mensagem: {message}")
+    #Declarando a exange e enviando a mensagem
+    channel.basic_publish(exchange='', routing_key="letterbox", body=message)
 
-#Fechando a conexão
-connection.close()
+    print(f"enviando a mensagem: {message}")
+
+    time.sleep(random.randint(1, 4))
+
+    mensageId += 1
 
 
