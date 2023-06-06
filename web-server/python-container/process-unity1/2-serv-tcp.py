@@ -18,7 +18,6 @@ bash_script = '''
 python3 user_code.py
 '''
 
-
 HOST = ''              # Endereco IP do Servidor
 PORT = 5000            # Porta que o Servidor esta
 

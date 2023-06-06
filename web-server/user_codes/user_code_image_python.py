@@ -3,9 +3,9 @@ import os
 
 url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1200px-Python-logo-notext.svg.png'
 
-nome_arquivo = "Pyhon.png"
+nome_arquivo = "Python.png"
 
-diretorio_destino = "/app"
+diretorio_destino = "/app/output"
 
 caminho_destino = os.path.join(diretorio_destino, nome_arquivo)
 
