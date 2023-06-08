@@ -1,8 +1,9 @@
 import pika
 import socket
+import os
 
-HOST = '127.0.0.1'     # Endereco IP da unidade de processamento
-PORT = 5000            # Porta que o Servidor esta
+HOST = os.environ.get('PROCESS-UNITY_NAME')     # Endereco IP da unidade de processamento
+PORT = os.environ.get('PROCESS-UNITY_PORT')            # Porta que o Servidor esta
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 dest = (HOST, PORT)
 tcp.connect(dest)
@@ -15,7 +16,7 @@ def QueueConnection():
 
     channel = connection.channel()
 
-    channel.queue_declare(queue="Server-Queue-test")
+    channel.queue_declare(queue=os.environ.get('QUEUE_NAME'))
     
     return channel
 
@@ -42,6 +43,6 @@ def callback(ch, method, properties, body):
     print("mensagem processada")
 
 channel = QueueConnection() #Declarando canal
-channel.basic_consume(queue='Server-Queue-test', on_message_callback=callback)
+channel.basic_consume(queue=os.environ.get('QUEUE_NAME'), on_message_callback=callback)
 channel.start_consuming()
 print("consumidor pronto para receber mensagens")

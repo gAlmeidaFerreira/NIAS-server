@@ -1,8 +1,8 @@
 from flask import Flask, render_template, url_for
 from flask.helpers import flash, redirect
 from forms import Resgistrationform, LogInform, UploadFileForm
-from werkzeug.utils import secure_filename
 import pika
+import os
 
 app = Flask(__name__)
 
@@ -17,7 +17,7 @@ def QueueConnection():
 
     channel = connection.channel()
 
-    channel.queue_declare(queue="Server-Queue-test")
+    channel.queue_declare(queue=os.environ.get('QUEUE_NAME'))
     
     return channel
 
@@ -40,7 +40,7 @@ def upload():
         file = form.file.data
         content = file.read()
         channel = QueueConnection() # Declarando canal da fila
-        channel.basic_publish(exchange='', routing_key='Server-Queue-test', body=content) # Enviando conteúdo do arquvio para a fila
+        channel.basic_publish(exchange='', routing_key=os.environ.get('QUEUE_NAME'), body=content) # Enviando conteúdo do arquvio para a fila
         #file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
         flash(f'Arquivo {form.file.name} sumetido com sucesso!','success')
         return redirect(url_for('homepage'))
@@ -64,4 +64,4 @@ def login():
 
 #Colocar site no ar
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0")

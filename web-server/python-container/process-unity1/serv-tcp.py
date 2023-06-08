@@ -1,5 +1,6 @@
 import socket
 import subprocess
+import os
 
 # Criando processo para executar código do usuário
 def code_exec(bash_script):
@@ -19,7 +20,7 @@ python3 user_code.py
 '''
 
 HOST = ''              # Endereco IP do Servidor
-PORT = 5000            # Porta que o Servidor esta
+PORT = os.environ.get('PROCESS-UNITY_PORT')            # Porta que o Servidor esta
 
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
