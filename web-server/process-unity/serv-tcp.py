@@ -1,6 +1,7 @@
 import socket
 import subprocess
 import os
+import zipfile
 
 # Criando processo para executar código do usuário
 def code_exec(bash_script):
@@ -12,15 +13,19 @@ def code_exec(bash_script):
 		print('Saída:', stdout.decode())
 	return stdout, stderr
 
+
 #Criando comando bash para executar código do usuário
 bash_script = ''' 
 #!/bin/bash
 
-python3 user_code.py
+cd /app/user_file
+
+pip install -r requirements.txt
+python3 code.py
 '''
 
 HOST = ''              # Endereco IP do Servidor
-PORT = os.environ.get('PROCESS-UNITY_PORT')            # Porta que o Servidor esta
+PORT = int(os.environ.get('PROCESS_UNITY_PORT'))            # Porta que o Servidor esta
 
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -33,14 +38,25 @@ try:
 		try:
 			connection, cliente = tcp.accept()
 			print('Concetado por', cliente)
-			file = open("user_code.py", 'wb')
-			while True:
-				data = connection.recv(1024).decode()
-				if not data:
-					break
-				file.write(data)
-				stdout, stderr = code_exec(bash_script)
+
+			zip_path = "/app/user_file.zip"
+			with open(zip_path, 'wb') as file: # Salvando arquivo compactado
+				while True:
+					data = connection.recv(1024)
+					if not data:
+						break
+					file.write(data)
+			print("Arquivo recebido com sucesso")
+
+			extract_path = "/app/user_file"
+			with zipfile.ZipFile(zip_path, 'wb') as zip: # Extraindo arquivo compactado
+				zip.extractall(extract_path)
+			print("Arquivo extraído com sucesso")
+				
+			stdout, stderr = code_exec(bash_script) # Executando arquivo
+			print("Arquvio executado com sucesso")
 			print('Finalizando conexao do cliente', cliente)
+
 		except Exception as ex:
 			print(ex)
 		finally:

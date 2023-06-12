@@ -1,27 +1,80 @@
 version: '3.9'
 
 networks:
-  lb-network:
-     driver: bridge
+  nias_server_network:
+
 
 services:
-  app1:
-    image: python-app1:latest
+  web:
+    build: 
+      context: ./server-web-page
+      args:
+        - WEB_PAGE_PORT=${WEB_PAGE_PORT}
+    image: ${WEB_PAGE_NAME}:${WEB_PAGE_VERSION}
+    environment:
+      - QUEUE_NAME=${QUEUE_NAME}
+      - BROKER_NAME=${BROKER_NAME}
+    container_name: ${WEB_PAGE_NAME}
+    
     ports:
-      - "8000:8000"
+      - "${WEB_PAGE_PORT}:${WEB_PAGE_PORT}"
     networks:
-      - lb-network
+      - nias_server_network
+    depends_on:
+      - queue
   
-  app2:
-    image: python-app2:latest
+  queue:
+    build: 
+      context: ./rabbitmq-queue
+      args:
+        - QUEUE_INTERFACE_PORT=${QUEUE_INTERFACE_PORT}
+    image: ${BROKER_NAME}:${BROKER_VERSION}
+    container_name: ${BROKER_NAME}
     ports:
-      - "8001:8000"
+      - "${QUEUE_INTERFACE_PORT}:${QUEUE_INTERFACE_PORT}"
+      - "${QUEUE_CONFIG_PORT}:${QUEUE_CONFIG_PORT}"
     networks:
-      - lb-network
+      - nias_server_network
    
-  nginx-lb:
-    image: nginx-lb:latest
+  consumer:
+    build: 
+      context: ./consumer
+      args:
+        - QUEUE_CONSUMER_PORT=${QUEUE_CONSUMER_PORT}
+    image: ${QUEUE_CONSUMER_NAME}:${QUEUE_CONSUMER_VERSION}
+    environment:
+      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME}
+      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT}
+      - QUEUE_NAME=${QUEUE_NAME}
+      - BROKER_NAME=${BROKER_NAME}
+    container_name: ${QUEUE_CONSUMER_NAME}
     ports:
-     - "80:80"
+     - "${QUEUE_CONSUMER_PORT}:${QUEUE_CONSUMER_PORT}"
     networks:
-     - lb-network
+      - nias_server_network
+    depends_on:
+      queue:
+        condition: service_healthy
+        restart: true
+      process-unity1:
+        condition: service_started
+    
+  process-unity1:
+    build: 
+      context: ./process-unity
+      args:
+        - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT}
+    image: process-unity:${PROCESS_UNITY_PYTHON_VERSION}
+    environment:
+      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT}
+    container_name: ${PROCESS_UNITY_NAME}
+    ports:
+      - "${PROCESS_UNITY_PORT}:${PROCESS_UNITY_PORT}"
+    networks:
+      - nias_server_network
+    volumes:
+      - nias_server_volume:/app/output
+
+volumes:
+  nias_server_volume:
+

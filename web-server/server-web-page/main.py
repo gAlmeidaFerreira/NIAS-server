@@ -11,19 +11,21 @@ app.config['UPLOAD_FOLDER'] = 'static/files'
 
 #Criando conexão com fila rabbitmq
 def QueueConnection():
-    connection_params = pika.ConnectionParameters("localhost")
+    connection_params = pika.ConnectionParameters(os.environ.get('BROKER_NAME'))
 
     connection = pika.BlockingConnection(connection_params)
 
     channel = connection.channel()
 
     channel.queue_declare(queue=os.environ.get('QUEUE_NAME'))
+    #channel.queue_declare('fila-teste')
     
     return channel
 
 #Pagina home
 @app.route("/")
 def homepage():
+    channel = QueueConnection() # Declarando canal da fila
     return render_template("homepage.html")
 
 #Pagina de contatos
@@ -41,7 +43,7 @@ def upload():
         content = file.read()
         channel = QueueConnection() # Declarando canal da fila
         channel.basic_publish(exchange='', routing_key=os.environ.get('QUEUE_NAME'), body=content) # Enviando conteúdo do arquvio para a fila
-        #file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
+        #channel.basic_publish(exchange='', routing_key='fila-teste', body=content)
         flash(f'Arquivo {form.file.name} sumetido com sucesso!','success')
         return redirect(url_for('homepage'))
     return render_template("upload.html", title="Upload Files", form = form)
