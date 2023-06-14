@@ -13,4 +13,4 @@ COPY . .
 
 EXPOSE ${PROCESS_UNITY_PORT}
 
-CMD ["python", "./serv-tcp.py"]
+CMD ["python", "./Processor.py"]

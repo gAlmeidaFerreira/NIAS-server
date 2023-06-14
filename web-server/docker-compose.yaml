@@ -15,7 +15,6 @@ services:
       - QUEUE_NAME=${QUEUE_NAME}
       - BROKER_NAME=${BROKER_NAME}
     container_name: ${WEB_PAGE_NAME}
-    
     ports:
       - "${WEB_PAGE_PORT}:${WEB_PAGE_PORT}"
     networks:
@@ -67,6 +66,7 @@ services:
     image: process-unity:${PROCESS_UNITY_PYTHON_VERSION}
     environment:
       - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT}
+      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME}
     container_name: ${PROCESS_UNITY_NAME}
     ports:
       - "${PROCESS_UNITY_PORT}:${PROCESS_UNITY_PORT}"

@@ -41,11 +41,8 @@ try:
 
 			zip_path = "/app/user_file.zip"
 			with open(zip_path, 'wb') as file: # Salvando arquivo compactado
-				while True:
-					data = connection.recv(1024)
-					if not data:
-						break
-					file.write(data)
+				data = connection.recv(1024)
+				file.write(data)
 			print("Arquivo recebido com sucesso")
 
 			extract_path = "/app/user_file"
@@ -59,7 +56,7 @@ try:
 
 		except Exception as ex:
 			print(ex)
-		finally:
-			connection.close()
+		
+		connection.close()
 finally:
 	tcp.close()
