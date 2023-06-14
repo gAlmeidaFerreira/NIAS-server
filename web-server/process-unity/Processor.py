@@ -15,7 +15,8 @@ def code_exec(bash_script):
 		print('Saída:', stdout.decode())
 	return stdout, stderr
 
-
+#TODO: #1 Pensar em lógica para não depender (ou usar) do nome do arquivo dado pelo usuário
+#TODO: #3 Adicionar lógica para que Output dos códigos do susuários não se sobreescrevam
 #Criando comando bash para executar código do usuário
 bash_script = ''' 
 #!/bin/bash

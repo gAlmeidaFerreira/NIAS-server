@@ -49,6 +49,8 @@ def upload():
     return render_template("upload.html", title="Upload Files", form = form)
 
 
+#TODO: #2 Criar página para retornar o resultado dos códigos ao usuário
+
 #Paginas de registro e login
 @app.route("/register", methods=['GET','POST'])
 def register():
