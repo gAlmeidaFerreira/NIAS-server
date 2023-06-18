@@ -1,7 +1,6 @@
 from flask import Flask, render_template, send_from_directory, url_for, request
 from flask.helpers import flash, redirect
 from forms import Resgistrationform, LogInform, UploadFileForm
-import pika
 import os
 import requests
 
