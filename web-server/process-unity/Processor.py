@@ -2,6 +2,7 @@ import subprocess
 import os
 import shutil
 import zipfile
+import pathlib
 from flask import Flask, request, jsonify
 
 #Declarando variáveis
@@ -40,7 +41,6 @@ output_origin="/app/user_file/$file_name/output"
 output_destiny="/app/output"
 output_name="output_$file_name"
 
-mkdir "$output_destiny"
 cp -r "$output_origin" "$output_destiny/$output_name"
 '''
 
@@ -62,8 +62,19 @@ def process_file():
     try:
           stdout, stderr = code_exec(bash_script) # Executando arquivo
 
+          # Compactando diretório output
+          output_name = os.listdir(extract_path)[0]
+          output_path = f"/app/output/output_{output_name}"
+          output_zip = f"/app/output/output_{output_name}.zip"
+          directory = pathlib.Path(output_path)
+          with zipfile.ZipFile(output_zip, 'w', zipfile.ZIP_DEFLATED) as archive:
+               for file_path in directory.rglob("*"):
+                     archive.write(file_path, arcname=file_path.relative_to(directory)) #Compactando arquivos recursivamente
+          archive.close()
+
           os.remove(zip_path)
           shutil.rmtree(extract_path)
+          shutil.rmtree(output_path)
 
           response = jsonify({'message':'Arquivo processado com sucesso', 'code':f'{stdout}'})
           response.status_code = 200

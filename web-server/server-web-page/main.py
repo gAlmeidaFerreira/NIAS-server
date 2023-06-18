@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, send_from_directory, url_for, request
 from flask.helpers import flash, redirect
 from forms import Resgistrationform, LogInform, UploadFileForm
 import pika
@@ -44,7 +44,17 @@ def upload():
             return redirect(url_for('upload'))
     return render_template("upload.html", title="Upload Files", form = form)
     
-#TODO: #2 Criar página para retornar o resultado dos códigos ao usuário
+#Pagina para seleção de outputs
+@app.route("/outputs")
+def outputs():
+    files = os.listdir('/app/output')
+    return render_template('outputs.html', files=files)
+
+#Download de outputs
+@app.route("/download/<file_name>")
+def download(file_name):
+    file_path = '/app/output'
+    return send_from_directory(file_path, file_name, as_attachment=True)
 
 #Paginas de registro e login
 @app.route("/register", methods=['GET','POST'])
