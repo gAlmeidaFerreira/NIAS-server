@@ -1,31 +1,25 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from flask.helpers import flash, redirect
 from forms import Resgistrationform, LogInform, UploadFileForm
 import pika
 import os
+import requests
+
+#Declarando Variáveis
+queue_producer_name = os.environ.get('QUEUE_PRODUCER_NAME')
+queue_producer_port = os.environ.get('QUEUE_PRODUCER_PORT')
+producer_url=f"http://{queue_producer_name}:{queue_producer_port}/product_message"
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '8ec624b940a6696b13c8f50c8bab331b'
 app.config['UPLOAD_FOLDER'] = 'static/files'
 
-#Criando conexão com fila rabbitmq
-def QueueConnection():
-    connection_params = pika.ConnectionParameters(os.environ.get('BROKER_NAME'))
-
-    connection = pika.BlockingConnection(connection_params)
-
-    channel = connection.channel()
-
-    channel.queue_declare(queue=os.environ.get('QUEUE_NAME'))
-    #channel.queue_declare('fila-teste')
-    
-    return channel
+producer_url=f"http://{queue_producer_name}:{queue_producer_port}/product_message"
 
 #Pagina home
 @app.route("/")
 def homepage():
-    channel = QueueConnection() # Declarando canal da fila
     return render_template("homepage.html")
 
 #Pagina de contatos
@@ -37,18 +31,19 @@ def contatos():
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     form = UploadFileForm()
-    #broker = MessageProducer()
     if form.validate_on_submit():
         file = form.file.data
-        content = file.read()
-        channel = QueueConnection() # Declarando canal da fila
-        channel.basic_publish(exchange='', routing_key=os.environ.get('QUEUE_NAME'), body=content) # Enviando conteúdo do arquvio para a fila
-        #channel.basic_publish(exchange='', routing_key='fila-teste', body=content)
-        flash(f'Arquivo {form.file.name} sumetido com sucesso!','success')
-        return redirect(url_for('homepage'))
+        response = requests.post(producer_url, file)
+        if response.status_code == 200:
+            print(response.json())
+            flash(f'Arquivo {file.filename} submetido com sucesso!','success')
+            return redirect(url_for('homepage'))
+        else:
+            print(response.json())
+            flash(f'Falha ao enviar arquivo {file.filename}', 'error')
+            return redirect(url_for('upload'))
     return render_template("upload.html", title="Upload Files", form = form)
-
-
+    
 #TODO: #2 Criar página para retornar o resultado dos códigos ao usuário
 
 #Paginas de registro e login
@@ -64,7 +59,6 @@ def register():
 def login():
     form = LogInform()
     return render_template("login.html", title = "LogIn", form=form)
-
 
 #Colocar site no ar
 if __name__ == "__main__":

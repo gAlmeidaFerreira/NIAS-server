@@ -3,7 +3,6 @@ version: '3.9'
 networks:
   nias_server_network:
 
-
 services:
   web:
     build: 
@@ -12,8 +11,8 @@ services:
         - WEB_PAGE_PORT=${WEB_PAGE_PORT}
     image: ${WEB_PAGE_NAME}:${WEB_PAGE_VERSION}
     environment:
-      - QUEUE_NAME=${QUEUE_NAME}
-      - BROKER_NAME=${BROKER_NAME}
+      - QUEUE_PRODUCER_NAME=${QUEUE_PRODUCER_NAME}
+      - QUEUE_PRODUCER_PORT=${QUEUE_PRODUCER_PORT}
     container_name: ${WEB_PAGE_NAME}
     ports:
       - "${WEB_PAGE_PORT}:${WEB_PAGE_PORT}"
@@ -21,6 +20,26 @@ services:
       - nias_server_network
     depends_on:
       - queue
+    volumes:
+      - nias_server_volume:/app/output
+
+  producer:
+    build:
+      context: ./producer
+      args:
+        - QUEUE_PRODUCER_PORT=${QUEUE_PRODUCER_PORT}
+    image: ${QUEUE_PRODUCER_NAME}:${QUEUE_PRODUCER_VERSION}
+    container_name: ${QUEUE_PRODUCER_NAME}
+    environment:
+      - QUEUE_PRODUCER_NAME=${QUEUE_PRODUCER_NAME}
+      - QUEUE_PRODUCER_PORT=${QUEUE_PRODUCER_PORT}
+      - QUEUE_NAME=${QUEUE_NAME}
+      - BROKER_NAME=${BROKER_NAME}
+    ports:
+      - "${QUEUE_PRODUCER_PORT}:${QUEUE_PRODUCER_PORT}"
+    networks:
+      - nias_server_network
+    
   
   queue:
     build: 
