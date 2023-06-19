@@ -1,5 +1,4 @@
 import pika
-import socket
 import os
 import requests
 
@@ -9,14 +8,6 @@ broker_name = os.environ.get('BROKER_NAME')
 process_unity_name = os.environ.get('PROCESS_UNITY_NAME')
 process_unity_port = os.environ.get('PROCESS_UNITY_PORT')
 processor_url = f"http://{process_unity_name}:{process_unity_port}/process_file"
-
-"""
-HOST = os.environ.get('PROCESS_UNITY_NAME')     # Endereco IP da unidade de processamento
-PORT = int(os.environ.get('PROCESS_UNITY_PORT'))            # Porta que o Servidor esta
-tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-dest = (HOST, PORT)
-tcp.connect(dest)
-"""
 
 #Criando conexão com fila rabbitmq
 def QueueConnection(queue_name):
