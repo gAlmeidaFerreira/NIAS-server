@@ -22,6 +22,7 @@ def QueueConnection(queue_name):
     
     return channel
 
+#TODO: #5 Adicionar política de retentativa no caso de retorno de mensagem para fila
 
 #Criando callback para consumer
 def callback(ch, method, properties, body):

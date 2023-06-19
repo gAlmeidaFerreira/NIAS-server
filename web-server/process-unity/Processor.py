@@ -44,6 +44,8 @@ output_name="output_$file_name"
 cp -r "$output_origin" "$output_destiny/$output_name"
 '''
 
+#TODO: #6 Adicionar lógica para retornar log de execução do código do usuário no output
+
 @app.route('/process_file', methods=['POST'])
 def process_file():
 	

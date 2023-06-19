@@ -26,6 +26,8 @@ def homepage():
 def contatos():
     return render_template("contatos.html", title="contatos")
 
+#TODO: #4 Adicionar verificação de existência de nome de porjeto (Checkbox caso usuário queira sobreescrever output)
+
 #pagina de upload de arquivos
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
