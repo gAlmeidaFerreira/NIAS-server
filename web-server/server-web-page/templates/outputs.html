@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+		<form method="GET" enctype="multipart/form-data">
+			<fieldset class="form-group">
+				<legend class="border-bottom mb-4">
+					Download de Output
+				</legend>
+				<div class="form-group">
+					{% for file in files %}
+                        <li><a href="/download/{{ file }}">{{ file }}</a></li>
+                    {% endfor %}
+				</div>
+		</form>
+	</div>
+{% endblock content %}
