@@ -33,14 +33,13 @@ services:
     environment:
       - QUEUE_PRODUCER_NAME=${QUEUE_PRODUCER_NAME}
       - QUEUE_PRODUCER_PORT=${QUEUE_PRODUCER_PORT}
-      - QUEUE_NAME=${QUEUE_NAME}
+      - QUEUE_NAME=${QUEUE_NAME_PYTHON}
       - BROKER_NAME=${BROKER_NAME}
     ports:
       - "${QUEUE_PRODUCER_PORT}:${QUEUE_PRODUCER_PORT}"
     networks:
       - nias_server_network
     
-  
   queue:
     build: 
       context: ./rabbitmq-queue
@@ -54,45 +53,123 @@ services:
     networks:
       - nias_server_network
    
-  consumer:
+  consumer_python_1:
     build: 
       context: ./consumer
       args:
-        - QUEUE_CONSUMER_PORT=${QUEUE_CONSUMER_PORT}
-    image: ${QUEUE_CONSUMER_NAME}:${QUEUE_CONSUMER_VERSION}
+        - QUEUE_CONSUMER_PORT=${QUEUE_CONSUMER_PORT_PYTHON_1}
+    image: consumer_python:${QUEUE_CONSUMER_VERSION_PYTHON}
     environment:
-      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME}
-      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT}
-      - QUEUE_NAME=${QUEUE_NAME}
+      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_PYTHON_1}
+      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_PYTHON_1}
+      - QUEUE_NAME=${QUEUE_NAME_PYTHON}
       - BROKER_NAME=${BROKER_NAME}
-    container_name: ${QUEUE_CONSUMER_NAME}
+    container_name: ${QUEUE_CONSUMER_NAME_PYTHON_1}
     ports:
-     - "${QUEUE_CONSUMER_PORT}:${QUEUE_CONSUMER_PORT}"
+     - "${QUEUE_CONSUMER_PORT_PYTHON_1}:${QUEUE_CONSUMER_PORT_PYTHON_1}"
+    tty: true
     networks:
       - nias_server_network
     depends_on:
       queue:
         condition: service_healthy
         restart: true
-      process-unity1:
-        condition: service_started
-    
-  process-unity1:
+
+  consumer_python_2:
+    build: 
+      context: ./consumer
+      args:
+        - QUEUE_CONSUMER_PORT=${QUEUE_CONSUMER_PORT_PYTHON_2}
+    image: consumer_python:${QUEUE_CONSUMER_VERSION_PYTHON}
+    environment:
+      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_PYTHON_2}
+      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_PYTHON_2}
+      - QUEUE_NAME=${QUEUE_NAME_PYTHON}
+      - BROKER_NAME=${BROKER_NAME}
+    container_name: ${QUEUE_CONSUMER_NAME_PYTHON_2}
+    ports:
+     - "${QUEUE_CONSUMER_PORT_PYTHON_2}:${QUEUE_CONSUMER_PORT_PYTHON_2}"
+    tty: true
+    networks:
+      - nias_server_network
+    depends_on:
+      queue:
+        condition: service_healthy
+        restart: true
+
+#  consumer_matlab_1:
+#    build: 
+#      context: ./consumer
+#      args:
+#        - QUEUE_CONSUMER_PORT=${QUEUE_CONSUMER_PORT_MATLAB_1}
+#    image: consumer_matlab:${QUEUE_CONSUMER_VERSION_MATLAB}
+#    environment:
+#      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_MATLAB_1}
+#      - PROCESS_UNITY_PORT=${PROCESS_UNITY_NAME_MATLAB_1}
+#      - QUEUE_NAME=${QUEUE_NAME_MATLAB}
+#      - BROKER_NAME=${BROKER_NAME}
+#    container_name: ${QUEUE_CONSUMER_NAME_MATLAB_1}
+#    ports:
+#     - "${QUEUE_CONSUMER_PORT_MATLAB_1}:${QUEUE_CONSUMER_PORT_MATLAB_1}"
+#    networks:
+#      - nias_server_network
+#    depends_on:
+#      queue:
+#        condition: service_healthy
+#        restart: true
+
+  process-unity_python_1:
     build: 
       context: ./process-unity
       args:
-        - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT}
-    image: process-unity:${PROCESS_UNITY_PYTHON_VERSION}
+        - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_PYTHON_1}
+    image: process-unity_python:${PROCESS_UNITY_VERSION_PYTHON}
     environment:
-      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT}
-      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME}
-    container_name: ${PROCESS_UNITY_NAME}
+      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_PYTHON_1}
+      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_PYTHON_1}
+    container_name: ${PROCESS_UNITY_NAME_PYTHON_1}
     ports:
-      - "${PROCESS_UNITY_PORT}:${PROCESS_UNITY_PORT}"
+      - "${PROCESS_UNITY_PORT_PYTHON_1}:${PROCESS_UNITY_PORT_PYTHON_1}"
+    tty: true
     networks:
       - nias_server_network
     volumes:
       - nias_server_volume:/app/output
+
+  process-unity_python_2:
+    build: 
+      context: ./process-unity
+      args:
+        - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_PYTHON_2}
+    image: process-unity_python:${PROCESS_UNITY_VERSION_PYTHON}
+    environment:
+      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_PYTHON_2}
+      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_PYTHON_2}
+    container_name: ${PROCESS_UNITY_NAME_PYTHON_2}
+    ports:
+      - "${PROCESS_UNITY_PORT_PYTHON_2}:${PROCESS_UNITY_PORT_PYTHON_2}"
+    tty: true
+    networks:
+      - nias_server_network
+    volumes:
+      - nias_server_volume:/app/output
+
+#  process-unity_matlab_1:
+#    build: 
+#      context: ./process-unity
+#      args:
+#        - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_MATLAB_1}
+#    image: process-unity_matlab:${PROCESS_UNITY_MATLAB_VERSION}
+#    environment:
+#      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_MATLAB_1}
+#      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_MATLAB_1}
+#    container_name: ${PROCESS_UNITY_NAME_MATLAB_1}
+#    ports:
+#      - "${PROCESS_UNITY_PORT_MATLAB_1}:${PROCESS_UNITY_PORT_MATLAB_1}"
+#    networks:
+#      - nias_server_network
+#    volumes:
+#      - nias_server_volume:/app/output
 
 volumes:
   nias_server_volume:

@@ -36,12 +36,13 @@ def callback(ch, method, properties, body):
         ch.basic_ack(delivery_tag=method.delivery_tag) #Processamento bem sucedido
         print(response.json())
     else:
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True) #Processamento mal sucedido, enviando mensagem de volta à fila
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False) #Processamento mal sucedido, enviando mensagem de volta à fila
         print(response.json())
         
 
 
 channel = QueueConnection(queue_name=queue_name) #Declarando canal
+channel.basic_qos(prefetch_count=1)
 channel.basic_consume(queue=queue_name, on_message_callback=callback)
 channel.start_consuming()
 print("consumidor pronto para receber mensagens")

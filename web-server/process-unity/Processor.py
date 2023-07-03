@@ -45,6 +45,7 @@ cp -r "$output_origin" "$output_destiny/$output_name"
 '''
 
 #TODO: #6 Adicionar lógica para retornar log de execução do código do usuário no output
+#TODO: #7 Adicionar tratamento para formatação incorreta de arquivo do usuário
 
 @app.route('/process_file', methods=['POST'])
 def process_file():
