@@ -79,12 +79,12 @@ def process_file():
           shutil.rmtree(extract_path)
           shutil.rmtree(output_path)
 
-          response = jsonify({'message':'Arquivo processado com sucesso', 'code':f'{stdout}'})
+          response = jsonify({'message':'Arquivo processado com sucesso', 'code':f'{stdout.decode("utf-8")}'})
           response.status_code = 200
           return response
     
     except Exception as ex:        
-          response = jsonify({'error': str(ex), 'error_code':f'{stderr}'})
+          response = jsonify({'error': str(ex), 'error_code':f'{stderr.decode("utf-8")}'})
           response.status_code = 500
           return response
     
