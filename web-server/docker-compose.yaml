@@ -16,6 +16,7 @@ services:
     container_name: ${WEB_PAGE_NAME}
     ports:
       - "${WEB_PAGE_PORT}:${WEB_PAGE_PORT}"
+    tty: true
     networks:
       - nias_server_network
     depends_on:
@@ -37,6 +38,7 @@ services:
       - BROKER_NAME=${BROKER_NAME}
     ports:
       - "${QUEUE_PRODUCER_PORT}:${QUEUE_PRODUCER_PORT}"
+    tty: true
     networks:
       - nias_server_network
     

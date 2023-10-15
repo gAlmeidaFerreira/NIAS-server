@@ -46,10 +46,10 @@ def upload():
     return render_template("upload.html", title="Upload Files", form = form)
     
 #Pagina para seleção de outputs
-@app.route("/outputs")
+@app.route("/results")
 def outputs():
     files = os.listdir('/app/output')
-    return render_template('outputs.html', files=files)
+    return render_template('results.html', title="Results", files=files)
 
 #Download de outputs
 @app.route("/download/<file_name>")
