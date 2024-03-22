@@ -99,27 +99,6 @@ services:
         condition: service_healthy
         restart: true
 
-#  consumer_matlab_1:
-#    build: 
-#      context: ./consumer
-#      args:
-#        - QUEUE_CONSUMER_PORT=${QUEUE_CONSUMER_PORT_MATLAB_1}
-#    image: consumer_matlab:${QUEUE_CONSUMER_VERSION_MATLAB}
-#    environment:
-#      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_MATLAB_1}
-#      - PROCESS_UNITY_PORT=${PROCESS_UNITY_NAME_MATLAB_1}
-#      - QUEUE_NAME=${QUEUE_NAME_MATLAB}
-#      - BROKER_NAME=${BROKER_NAME}
-#    container_name: ${QUEUE_CONSUMER_NAME_MATLAB_1}
-#    ports:
-#     - "${QUEUE_CONSUMER_PORT_MATLAB_1}:${QUEUE_CONSUMER_PORT_MATLAB_1}"
-#    networks:
-#      - nias_server_network
-#    depends_on:
-#      queue:
-#        condition: service_healthy
-#        restart: true
-
   process-unity_python_1:
     build: 
       context: ./process-unity
@@ -155,23 +134,6 @@ services:
       - nias_server_network
     volumes:
       - nias_server_volume:/app/output
-
-#  process-unity_matlab_1:
-#    build: 
-#      context: ./process-unity
-#      args:
-#        - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_MATLAB_1}
-#    image: process-unity_matlab:${PROCESS_UNITY_MATLAB_VERSION}
-#    environment:
-#      - PROCESS_UNITY_PORT=${PROCESS_UNITY_PORT_MATLAB_1}
-#      - PROCESS_UNITY_NAME=${PROCESS_UNITY_NAME_MATLAB_1}
-#    container_name: ${PROCESS_UNITY_NAME_MATLAB_1}
-#    ports:
-#      - "${PROCESS_UNITY_PORT_MATLAB_1}:${PROCESS_UNITY_PORT_MATLAB_1}"
-#    networks:
-#      - nias_server_network
-#    volumes:
-#      - nias_server_volume:/app/output
 
 volumes:
   nias_server_volume:
